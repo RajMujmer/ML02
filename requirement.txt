@@ -1,0 +1,3 @@
+Pandas
+Numpy
+Streamlit_option_menu
