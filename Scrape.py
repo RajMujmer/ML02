@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import re
 from typing import Union, List, Dict
+import sys
 
 def scrape_webpage(url: str) -> Union[str, None]:
     """
