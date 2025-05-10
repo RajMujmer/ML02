@@ -17,13 +17,13 @@ def scrape_webpage(url: str) -> Union[str, None]:
         str: The text content of the webpage, or None if an error occurs.
     """
     try:
-        # Add a user-agent to the request to avoid being blocked by some websites.
+        # Add a user-agent to the request to avoid being blocked by some websites. # Line 8
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
         response = requests.get(url, headers=headers, timeout=10)  # Set a timeout
         response.raise_for_status()  # Raise an exception for bad status codes
 
         soup = BeautifulSoup(response.content, 'html.parser')
-        # Remove script and style tags to get only the meaningful text
+        # Remove script and style tags to get only the meaningful text # Line 14
         for script_or_style in soup.find_all(['script', 'style']):
             script_or_style.decompose()
         text = soup.get_text(separator='\n', strip=True)  # Use \n as separator and strip text
@@ -49,14 +49,14 @@ def extract_data(text: str) -> List[Dict[str, Union[str, int, float]]]:
         represents a data entry with 'type' and 'value' keys.
     """
     data_list = []
-    lines = text.split('\n')  # Split the text into lines
+    lines = text.split('\n')  # Split the text into lines # Line 31
 
     for line in lines:
         line = line.strip()  # Remove leading/trailing whitespace
         if not line:
             continue  # Skip empty lines
 
-        # Attempt to identify data type and extract value
+        # Attempt to identify data type and extract value # Line 37
         if re.match(r'^\d+$', line):
             data_list.append({'type': 'integer', 'value': int(line)})
         elif re.match(r'^\d+\.\d+$', line):
@@ -91,7 +91,7 @@ def main():
 
     url = st.text_input("Enter the URL of the webpage to scrape:")
 
-    if st.button("Scrape and Preprocess"):
+    if st.button("Scrape and Preprocess"): # Line 70
         if not url:
             st.error("Please enter a URL.")
             return
@@ -102,24 +102,23 @@ def main():
             extracted_data = extract_data(text_content)
             df = preprocess_data(extracted_data)
             st.subheader("Extracted Data:")
-            tab1, tab2, tab3, tab4 = st.tabs(["All Data", "Integers", "Floats", "Strings"])
+            tab1, tab2, tab3, tab4, tab5 = st.tabs(["All Data", "Integers", "Floats", "Strings", "Merged"]) # Line 80
 
             with tab1:
                 st.dataframe(df)
-                st.write(f"Total size: {sys.getsizeof(df.to_string().encode('utf-8'))/1024:.2f} KB")
+                st.write(f"Total size: {sys.getsizeof(df.to_string().encode('utf-8'))/1024:.2f} KB") # Line 84
             with tab2:
                 int_df = df[df['type'] == 'integer']
                 st.dataframe(int_df)
-                st.write(f"Integers size: {sys.getsizeof(int_df.to_string().encode('utf-8'))/1024:.2f} KB")
+                st.write(f"Integers size: {sys.getsizeof(int_df.to_string().encode('utf-8'))/1024:.2f} KB") # Line 88
             with tab3:
                 float_df = df[df['type'] == 'float']
                 st.dataframe(float_df)
-                st.write(f"Floats size: {sys.getsizeof(float_df.to_string().encode('utf-8'))/1024:.2f} KB")
+                st.write(f"Floats size: {sys.getsizeof(float_df.to_string().encode('utf-8'))/1024:.2f} KB") # Line 92
             with tab4:
                 string_df = df[df['type'] == 'string']
                 st.dataframe(string_df)
-                st.write(f"String size : {sys.getsizeof(string_df.to_string().encode('utf-8'))/1024:.2f} KB")
-           
+                st.write(f"Strings size: {sys.getsizeof(string_df.to_string().encode('utf-8'))/1024:.2f} KB") # Line 96
             with tab5: # Line 97
                 if st.checkbox("Merge all data types"):
                     merged_df = pd.concat([int_df, float_df, string_df])
