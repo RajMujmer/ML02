@@ -127,6 +127,7 @@ def main():
 
             st.subheader("Raw Text")
             st.text(text_content)
+            st.write(f"Raw Text size : {sys.getsizeof(text_content.to_string().encode('utf-8'))/1024:.2f} KB")
         else:
             st.error("Failed to scrape data from the webpage.")
 
