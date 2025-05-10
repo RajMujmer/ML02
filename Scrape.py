@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import re
 from typing import Union, List, Dict
+import sys
 
 def scrape_webpage(url: str) -> Union[str, None]:
     """
@@ -105,15 +106,25 @@ def main():
 
             with tab1:
                 st.dataframe(df)
+                st.write(f"Total size: {sys.getsizeof(df.to_string().encode('utf-8'))/1024:.2f} KB")
             with tab2:
                 int_df = df[df['type'] == 'integer']
                 st.dataframe(int_df)
+                st.write(f"Integers size: {sys.getsizeof(int_df.to_string().encode('utf-8'))/1024:.2f} KB")
             with tab3:
                 float_df = df[df['type'] == 'float']
                 st.dataframe(float_df)
+                st.write(f"Floats size: {sys.getsizeof(float_df.to_string().encode('utf-8'))/1024:.2f} KB")
             with tab4:
                 string_df = df[df['type'] == 'string']
                 st.dataframe(string_df)
+                st.write(f"String size : {sys.getsizeof(string_df.to_string().encode('utf-8'))/1024:.2f} KB")
+           
+            with tab5: # Line 97
+                if st.checkbox("Merge all data types"):
+                    merged_df = pd.concat([int_df, float_df, string_df])
+                    st.dataframe(merged_df)
+                    st.write(f"Merged size: {sys.getsizeof(merged_df.to_string().encode('utf-8'))/1024:.2f} KB")
 
             st.subheader("Raw Text")
             st.text(text_content)
