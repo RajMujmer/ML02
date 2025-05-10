@@ -4,7 +4,6 @@ import requests
 import pandas as pd
 import re
 from typing import Union, List, Dict
-import sys
 
 def scrape_webpage(url: str) -> Union[str, None]:
     """
@@ -100,26 +99,26 @@ def main():
         text_content = scrape_webpage(url)
         if text_content:
             extracted_data = extract_data(text_content)
-            if extracted_data:
-                df = preprocess_data(extracted_data)
-                st.subheader("Extracted Data:")
-                st.dataframe(df)  # Display as DataFrame
-                #  Add a download button
-                csv_data = df.to_csv(index=False)  # Get CSV data
-                csv_size_bytes = sys.getsizeof(csv_data.encode('utf-8'))
-                csv_size_kb = csv_size_bytes / 1024
-                st.write(f"CSV File Size: {csv_size_kb:.2f} KB")
-                st.download_button(
-                    label="Download CSV",
-                    data=csv_data.encode('utf-8'),
-                    file_name="scraped_data.csv",
-                    mime="text/csv",
-                )
-            else:
-                st.warning("No data could be extracted from the webpage.")
+            df = preprocess_data(extracted_data)
+            st.subheader("Extracted Data:")
+            tab1, tab2, tab3, tab4 = st.tabs(["All Data", "Integers", "Floats", "Strings"])
+
+            with tab1:
+                st.dataframe(df)
+            with tab2:
+                int_df = df[df['type'] == 'integer']
+                st.dataframe(int_df)
+            with tab3:
+                float_df = df[df['type'] == 'float']
+                st.dataframe(float_df)
+            with tab4:
+                string_df = df[df['type'] == 'string']
+                st.dataframe(string_df)
+
+            st.subheader("Raw Text")
+            st.text(text_content)
         else:
-            st.error("Failed to scrape data from the webpage.") # Error already shown by scrape_webpage, show generic
-            return
+            st.error("Failed to scrape data from the webpage.")
 
 if __name__ == "__main__":
     main()
