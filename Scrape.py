@@ -105,6 +105,9 @@ def main():
                 st.dataframe(df)  # Display as DataFrame
                 #  Add a download button
                 csv_data = df.to_csv(index=False)  # Get CSV data
+                csv_size_bytes = sys.getsizeof(csv_data.encode('utf-8'))
+                csv_size_kb = csv_size_bytes / 1024
+                st.write(f"CSV File Size: {csv_size_kb:.2f} KB")
                 st.download_button(
                     label="Download CSV",
                     data=csv_data.encode('utf-8'),
